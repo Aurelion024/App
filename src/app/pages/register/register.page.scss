@@ -1,0 +1,14 @@
+ion-header ion-toolbar ion-title {
+    text-align: center;
+    font-size: x-large;
+  }
+
+  ion-list {
+    background: transparent;
+  }
+
+  ion-item {
+    --background: transparent;
+    --border-style: none;
+
+  }

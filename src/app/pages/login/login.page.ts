@@ -5,6 +5,7 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: false,
+  
 })
 export class LoginPage implements OnInit {
 
