@@ -3,19 +3,24 @@ ion-header ion-toolbar ion-title {
     font-size: x-large;
   }
 
-
+ion-card-header ion-img {
+    max-width: 100%; /* Asegura que la imagen no sea más ancha que su contenedor */
+    max-height: 200px; /* Controla la altura máxima de la imagen */
+    width: auto; /* Mantiene las proporciones de la imagen */
+    height: auto; /* Mantiene las proporciones de la imagen */
+    display: block; /* Elimina el espacio alrededor de la imagen */
+    margin: 0 auto; /* Centra la imagen horizontalmente dentro de su contenedor */
+    border-radius: 100px;
+  }
+  
 
   ion-card-header {
     text-align: center; 
-    background-color: #4caf50;
   }
-  ion-img-header { 
-    margin-bottom: 20px;
-  }
-  
+
   ion-card-header ion-card-title {
     font-size: 24px; 
     font-weight: bold; 
-    margin-bottom: 50px; 
-  }
+    margin-bottom: 50px;   
+}
   
