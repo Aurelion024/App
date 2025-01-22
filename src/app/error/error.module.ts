@@ -13,7 +13,8 @@ import { ErrorPage } from './error.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    ErrorPageRoutingModule
+    ErrorPageRoutingModule,
+
   ],
   declarations: [ErrorPage]
 })

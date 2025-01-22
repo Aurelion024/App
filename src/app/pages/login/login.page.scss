@@ -1,26 +1,40 @@
 ion-header ion-toolbar ion-title {
-    text-align: center;
-    font-size: x-large;
-  }
-
-ion-card-header ion-img {
-    max-width: 100%; /* Asegura que la imagen no sea más ancha que su contenedor */
-    max-height: 200px; /* Controla la altura máxima de la imagen */
-    width: auto; /* Mantiene las proporciones de la imagen */
-    height: auto; /* Mantiene las proporciones de la imagen */
-    display: block; /* Elimina el espacio alrededor de la imagen */
-    margin: 0 auto; /* Centra la imagen horizontalmente dentro de su contenedor */
-    border-radius: 100px;
-  }
-  
-
-  ion-card-header {
-    text-align: center; 
-  }
-
-  ion-card-header ion-card-title {
-    font-size: 24px; 
-    font-weight: bold; 
-    margin-bottom: 50px;   
+  text-align: center;
+  font-size: x-large;
 }
-  
+
+#btnConectar {
+  margin-top: 5%;
+  color: white;
+
+}
+
+#container ion-card ion-card-header ion-card-title {
+  font-size: xx-large;
+}
+
+#container ion-card ion-card-header ion-img {
+  width: 150px;
+  height: 150px;
+  margin: auto;
+  margin-top: 10%;
+  margin-bottom: 5%;
+  object-fit: cover;
+  border: 2px solid white;
+  border-radius: 50%;
+  //overflow:hidden = Permite ocultar el sobrante de la imagen vs el contenedor y bordes
+  overflow: hidden;
+}
+
+#seccionCarga {
+  padding: 2%;
+  margin-left: 25%;
+  margin-right: 25%;
+  margin-top: 5%;
+}
+
+#seccionCarga mat-spinner {
+  width: 50% !important;
+  margin: auto;
+  margin-top: 3%;
+}

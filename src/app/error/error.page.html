@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>error</ion-title>
+    <ion-title>PAGINA DE ERROR</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -10,4 +10,21 @@
       <ion-title size="large">error</ion-title>
     </ion-toolbar>
   </ion-header>
+  <div id="container">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>ERROR 404</ion-card-title>
+          <ion-icon size="large" color="danger" name="close-circle-outline"></ion-icon>
+        </ion-card-header>
+        <ion-card-content>
+          <strong>Ha sucedido un error en <br> el sistema <br>
+                  Si desea volver <br>
+                  presione aqui<br>
+          </strong>
+          <ion-button color="danger" fill="outline" shape="square" [routerLink]="['/home']">
+            Volver
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+  </div>
 </ion-content>
