@@ -1,18 +1,21 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="end">
-      <ion-button fill="clear" color="danger" (click)="logout()">
+      <ion-button fill="clear" color="danger" [routerLink]="['/error']" (click)="logout()">
         <ion-icon slot="end" name="log-out-outline"></ion-icon>
       </ion-button>
+      <ion-button slot="start" [routerLink]="['/error']" color="danger" fill="outline" size="small">
+        <ion-icon name="person-add-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
-    <ion-title>perfil</ion-title>
+    <ion-title>Perfil</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">perfil</ion-title>
+      <ion-title size="large">Perfil</ion-title>
     </ion-toolbar>
   </ion-header>
   <div id="container">
