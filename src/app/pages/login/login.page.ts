@@ -49,9 +49,10 @@ import { AuthService } from '../../Servicios/auth.service';
         this.msj = 'Credenciales no pueden estar vacias';
       }
     }
-  
-    ngAfterContentInit() {}
-  
+
+    registrar() {
+      this.router.navigate(['/register']);
+    }
     animacion() {
       /* Seleccionamos el elemento que deseamos utilizar para la animacion
          POr medio de un querySelector

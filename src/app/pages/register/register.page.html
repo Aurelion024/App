@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button fill="clear" color="danger" [routerLink]="['/login']">
+      <ion-button fill="clear" color="danger" [routerLink]="['/home']">
         <ion-icon slot="start" name="home-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -36,6 +36,9 @@
           </ion-item>
           <ion-button fill="outline" shape="square" color="danger" (click)="registrar()">
             Registrarme
+          </ion-button>
+          <ion-button fill="outline" shape="square" color="danger" (click)="conectar()">
+            Conectarme
           </ion-button>
         </ion-list>
       </ion-card-content>

@@ -25,6 +25,11 @@ export class RegisterPage implements OnInit {
   };
   ngOnInit() {}
 
+  conectar(){
+    this.router.navigate(['/login']);
+
+  }
+
   registrar() {
     //Verificamos que los campos tengan valor
     if (

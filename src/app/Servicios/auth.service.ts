@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LocalStorageService } from './local-storage.service';
-
+import { APIService } from './api.service';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -8,12 +9,12 @@ import { LocalStorageService } from './local-storage.service';
 export class AuthService {
   private static isLogged: boolean = false;
   private storage: LocalStorageService = new LocalStorageService();
-
+  private api: APIService = new APIService();
   constructor() {}
 
   login(user: string, pass: string): boolean {
     if (
-      (user == 'j.riquelmee' || user == 'jo.riquelmee@duocuc.cl') &&
+      (user == 'a.ramirez' || user == 'au.ramirez@duocuc.cl') &&
       pass == 'pass1234'
     ) {
       AuthService.isLogged = true;
@@ -35,6 +36,7 @@ export class AuthService {
     );
     //Si conectado tiene valor , las credenciales fueron validas
     //EN caso contrario , se le niega el acceso
+
     if (conectado) {
       //Guardamos el usuario encontrado en el almacenamiento local
       this.storage.setItem('conectado', conectado);
@@ -42,6 +44,27 @@ export class AuthService {
     } else {
       return false;
     }
+  }
+
+  loginAPI(user: string, pass: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      this.api.login(user).subscribe((res: any) => {
+        if (res.length > 0) {
+          if (
+            (res[0].username == user || res[0].correo == user) &&
+            res[0].pass == pass
+          ) {
+            this.storage.setItem('conectado', JSON.stringify(res[0]));
+            resolve(true);
+          } else {
+            resolve(false);
+            console.log('Credenciales no validas');
+          }
+        } else {
+          console.log('Llamada vacia');
+        }
+      });
+    });
   }
 
   registrar(user: string, correo: string, pass: string) {
@@ -67,6 +90,30 @@ export class AuthService {
     listaUsuarios.push(nuevoUsuario);
     //Devolvemos el registro de usuarios a su lugar
     this.storage.setItem('users', listaUsuarios);
+    return true;
+  }
+  /*  */
+  async registerAPI(
+    user: string,
+    correo: string,
+    pass: string
+  ): Promise<boolean> {
+    const users = await firstValueFrom(this.api.listarUsuarios());
+    const exists =
+      users.find((us: any) => us.username == user || us.correo == correo) !=
+      null;
+    if (exists) {
+      return false;
+    }
+
+    const nuevoUsuario = {
+      id: users.length + 1,
+      username: user,
+      correo: correo,
+      pass: pass,
+    };
+    await this.api.register(nuevoUsuario).subscribe();
+
     return true;
   }
 
