@@ -3,6 +3,12 @@
     <ion-button slot="start" [routerLink]="['/usuarios']" color="danger" fill="outline" size="small">
       <ion-icon name="person-add-outline"></ion-icon>
     </ion-button>
+
+    <ion-button slot="end" (click)="cerrarSesion()" color="danger" fill="outline" size="small">
+      <ion-icon name="log-out-outline" slot="start"></ion-icon>
+      Salir
+    </ion-button>
+
     <ion-title>Usuarios Registrados</ion-title>
   </ion-toolbar>
 </ion-header>

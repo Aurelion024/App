@@ -44,13 +44,14 @@ const routes: Routes = [
     loadChildren: () => import('./error/error.module').then( m => m.ErrorPageModule)
   },
   {
-    path: '**',
-    redirectTo: 'error',
-  },
-  {
     path: 'usuarios',
     loadChildren: () => import('./pages/usuarios/usuarios.module').then( m => m.UsuariosPageModule)
   },
+  {
+    path: '**',
+    redirectTo: 'error',
+    pathMatch: 'full'
+  }
 
 
 ];

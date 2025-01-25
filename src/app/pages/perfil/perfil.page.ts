@@ -54,9 +54,8 @@ export class PerfilPage implements OnInit {
   }
 
   guardarCambios() {
-    // Validaciones para username y teléfono
-    const usernamePattern = /^[a-zA-Z0-9_.-]{3,}$/; // Mismo patrón del registro
-    const phonePattern = /^[0-9]{9}$/; // Teléfono de 9 dígitos
+    const usernamePattern = /^[a-zA-Z0-9_.-]{3,}$/;
+    const phonePattern = /^[0-9]{9}$/;
 
     if (!usernamePattern.test(this.usuario.username)) {
       alert('El nombre de usuario debe tener al menos 3 caracteres y solo puede contener letras, números, "-", ".", "_".');
@@ -84,8 +83,7 @@ export class PerfilPage implements OnInit {
   }
 
   guardarNuevaPassword() {
-    // Validaciones para las contraseñas
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%?&])[A-Za-z\d@$!%?&]{8,}$/;
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d@$!%*?&]{8,}$/;
 
     if (this.passwordData.currentPassword !== this.usuario.pass) {
       alert('La contraseña actual no es correcta.');
@@ -93,9 +91,7 @@ export class PerfilPage implements OnInit {
     }
 
     if (!passwordPattern.test(this.passwordData.newPassword)) {
-      alert(
-        'La nueva contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un carácter especial.'
-      );
+      alert('La nueva contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un carácter especial.');
       return;
     }
 
@@ -119,5 +115,9 @@ export class PerfilPage implements OnInit {
         console.error(error);
       }
     );
+  }
+
+  irAUsuarios() {
+    this.router.navigate(['/usuarios']);
   }
 }
