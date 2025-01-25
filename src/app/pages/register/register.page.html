@@ -21,26 +21,87 @@
         <ion-card-title>Registro Usuario</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-list>
-          <ion-item>
-            <ion-input label="Usuario" [(ngModel)]="user.usuario" labelPlacement="floating"
-              placeholder="Ingrese su usuario"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-input label="Correo" [(ngModel)]="user.correo" labelPlacement="floating"
-              placeholder="Ingrese su correo"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-input label="Contraseña" type="password" [(ngModel)]="user.password" labelPlacement="floating"
-              placeholder="Ingrese su contraseña"></ion-input>
-          </ion-item>
-          <ion-button fill="outline" shape="square" color="danger" (click)="registrar()">
-            Registrarme
-          </ion-button>
-          <ion-button fill="outline" shape="square" color="danger" (click)="conectar()">
-            Conectarme
-          </ion-button>
-        </ion-list>
+        <form #registroForm="ngForm" (ngSubmit)="registrar()">
+          <ion-list>
+            <!-- Usuario -->
+            <ion-item>
+              <ion-input
+                label="Usuario"
+                [(ngModel)]="user.username"
+                name="usuario"
+                labelPlacement="floating"
+                placeholder="Ingrese su usuario"
+                required
+              ></ion-input>
+            </ion-item>
+
+            <!-- Correo -->
+            <ion-item>
+              <ion-input
+                label="Correo"
+                [(ngModel)]="user.correo"
+                name="correo"
+                labelPlacement="floating"
+                placeholder="Ingrese su correo"
+                required
+              ></ion-input>
+            </ion-item>
+
+            <!-- Contraseña -->
+            <ion-item>
+              <ion-input
+                label="Contraseña"
+                type="password"
+                [(ngModel)]="user.pass"
+                name="password"
+                labelPlacement="floating"
+                placeholder="Ingrese su contraseña"
+                required
+              ></ion-input>
+            </ion-item>
+
+            <!-- Confirmar Contraseña -->
+            <ion-item>
+              <ion-input
+                label="Confirmar Contraseña"
+                type="password"
+                [(ngModel)]="user.confirmPassword"
+                name="confirmPassword"
+                labelPlacement="floating"
+                placeholder="Confirme su contraseña"
+                required
+              ></ion-input>
+            </ion-item>
+
+            <!-- Teléfono -->
+            <ion-item>
+              <ion-input
+                label="Teléfono"
+                [(ngModel)]="user.telefono"
+                name="telefono"
+                labelPlacement="floating"
+                placeholder="Ingrese su número de teléfono"
+                required
+              ></ion-input>
+            </ion-item>
+
+            <!-- Botón Registrarse -->
+            <ion-button
+              type="submit"
+              fill="outline"
+              shape="square"
+              color="danger"
+            >
+              Registrarme
+            </ion-button>
+
+            <div class="signinLink">
+              <p>¿Ya tienes cuenta? <a [routerLink]="['/login']" style="color: #ff3131">Ingresa Aquí</a></p>
+            </div>
+
+            
+          </ion-list>
+        </form>
       </ion-card-content>
     </ion-card>
   </div>

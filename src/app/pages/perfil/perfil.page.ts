@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-
+import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../Servicios/auth.service';
 import { ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -12,37 +12,60 @@ import { Router } from '@angular/router';
   standalone: false,
 })
 export class PerfilPage implements OnInit {
-  constructor(
-    private auth: AuthService,
-    private router:Router,
-    private toast: ToastController
-  ) {}
-  user = {
-    usuario: '',
-    password: '',
-  };
-  nombreUsuario = '';
-  ngOnInit() {}
-  ngAfterContentInit() {
-    this.user = history.state.user;
-    this.nombreUsuario = this.user.usuario;
+  usuario: any = null;
+  mostrarModal = false; // Control del modal
+
+  constructor(private router: Router, private http: HttpClient) {}
+
+  ngOnInit() {
+    const storedUser = localStorage.getItem('usuario');
+    if (storedUser) {
+      this.usuario = JSON.parse(storedUser);
+    } else {
+      this.router.navigate(['/login']);
+    }
   }
 
-  logout() {
-    this.auth.logout();
-    this.router.navigate(['/home']);
-    this.generarToast('Usuario Desconectado');
+  cerrarSesion() {
+    localStorage.removeItem('usuario');
+    this.router.navigate(['/login']);
   }
 
-  generarToast(message: string) {
-    const toast = this.toast.create({
-      message: message,
-      duration: 3000,
-      position: 'bottom',
-    });
+  abrirModal() {
+    this.mostrarModal = true; // Abrir el modal
+  }
 
-    toast.then((res) => {
-      res.present();
-    });
+  cerrarModal() {
+    this.mostrarModal = false; // Cerrar el modal
+  }
+
+  guardarCambios() {
+    // Validaciones para username y teléfono
+    const usernamePattern = /^[a-zA-Z0-9_.-]{3,}$/; // Mismo patrón del registro
+    const phonePattern = /^[0-9]{9}$/; // Teléfono de 9 dígitos
+
+    if (!usernamePattern.test(this.usuario.username)) {
+      alert('El nombre de usuario debe tener al menos 3 caracteres y solo puede contener letras, números, "-", ".", "_".');
+      return;
+    }
+
+    if (!phonePattern.test(this.usuario.telefono)) {
+      alert('El número de teléfono debe tener exactamente 9 dígitos.');
+      return;
+    }
+
+    // Actualizar datos en JSON Server
+    const endpoint = `http://localhost:3000/users/${this.usuario.id}`;
+    this.http.put(endpoint, this.usuario).subscribe(
+      (response) => {
+        alert('Perfil actualizado correctamente.');
+        localStorage.setItem('usuario', JSON.stringify(this.usuario)); // Actualizar Local Storage
+        this.mostrarModal = false; // Cerrar el modal
+      },
+      (error) => {
+        alert('Error al actualizar el perfil.');
+        console.error(error);
+      }
+    );
   }
 }
