@@ -13,7 +13,13 @@ import { Router } from '@angular/router';
 })
 export class PerfilPage implements OnInit {
   usuario: any = null;
-  mostrarModal = false; // Control del modal
+  mostrarModal = false; // Control del modal para editar perfil
+  mostrarModalPassword = false; // Control del modal para cambiar contraseña
+  passwordData = {
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  };
 
   constructor(private router: Router, private http: HttpClient) {}
 
@@ -32,11 +38,19 @@ export class PerfilPage implements OnInit {
   }
 
   abrirModal() {
-    this.mostrarModal = true; // Abrir el modal
+    this.mostrarModal = true;
   }
 
   cerrarModal() {
-    this.mostrarModal = false; // Cerrar el modal
+    this.mostrarModal = false;
+  }
+
+  abrirModalPassword() {
+    this.mostrarModalPassword = true;
+  }
+
+  cerrarModalPassword() {
+    this.mostrarModalPassword = false;
   }
 
   guardarCambios() {
@@ -64,6 +78,44 @@ export class PerfilPage implements OnInit {
       },
       (error) => {
         alert('Error al actualizar el perfil.');
+        console.error(error);
+      }
+    );
+  }
+
+  guardarNuevaPassword() {
+    // Validaciones para las contraseñas
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%?&])[A-Za-z\d@$!%?&]{8,}$/;
+
+    if (this.passwordData.currentPassword !== this.usuario.pass) {
+      alert('La contraseña actual no es correcta.');
+      return;
+    }
+
+    if (!passwordPattern.test(this.passwordData.newPassword)) {
+      alert(
+        'La nueva contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un carácter especial.'
+      );
+      return;
+    }
+
+    if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
+      alert('La nueva contraseña y su confirmación no coinciden.');
+      return;
+    }
+
+    // Actualizar la contraseña en JSON Server
+    const endpoint = `http://localhost:3000/users/${this.usuario.id}`;
+    this.usuario.pass = this.passwordData.newPassword; // Actualizar la contraseña en el objeto usuario
+    this.http.put(endpoint, this.usuario).subscribe(
+      (response) => {
+        alert('Contraseña actualizada correctamente.');
+        localStorage.setItem('usuario', JSON.stringify(this.usuario)); // Actualizar Local Storage
+        this.mostrarModalPassword = false; // Cerrar el modal
+        this.passwordData = { currentPassword: '', newPassword: '', confirmPassword: '' }; // Limpiar campos
+      },
+      (error) => {
+        alert('Error al actualizar la contraseña.');
         console.error(error);
       }
     );

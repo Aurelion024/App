@@ -23,6 +23,12 @@
     Cerrar sesión
   </ion-button>
 
+  <!-- Botón para cambiar contraseña -->
+  <ion-button expand="full" color="tertiary" (click)="abrirModalPassword()">
+    Cambiar Contraseña
+  </ion-button>
+
+  <!-- Modal para editar el perfil -->
   <ion-modal [isOpen]="mostrarModal" (ionModalDidDismiss)="cerrarModal()">
     <ng-container *ngIf="usuario">
       <ion-header>
@@ -50,4 +56,39 @@
       </ion-content>
     </ng-container>
   </ion-modal>
+
+  <!-- Modal para cambiar contraseña -->
+  <ion-modal [isOpen]="mostrarModalPassword" (ionModalDidDismiss)="cerrarModalPassword()">
+    <ng-container *ngIf="usuario">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Cambiar Contraseña</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarModalPassword()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <ion-list>
+          <ion-item>
+            <ion-label position="stacked">Contraseña Actual</ion-label>
+            <ion-input [(ngModel)]="passwordData.currentPassword" type="password"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Nueva Contraseña</ion-label>
+            <ion-input [(ngModel)]="passwordData.newPassword" type="password"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Confirmar Nueva Contraseña</ion-label>
+            <ion-input [(ngModel)]="passwordData.confirmPassword" type="password"></ion-input>
+          </ion-item>
+        </ion-list>
+        <ion-button expand="full" color="success" (click)="guardarNuevaPassword()">
+          Guardar Contraseña
+        </ion-button>
+      </ion-content>
+    </ng-container>
+  </ion-modal>
+  
+  
 </ion-content>
