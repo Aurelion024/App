@@ -1,0 +1,30 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-button slot="start" [routerLink]="['/usuarios']" color="danger" fill="outline" size="small">
+      <ion-icon name="person-add-outline"></ion-icon>
+    </ion-button>
+    <ion-title>Usuarios Registrados</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-list *ngIf="usuarios.length > 0">
+    <ion-item *ngFor="let usuario of usuarios">
+      <ion-avatar slot="start">
+        <ion-icon name="person-circle" style="font-size: 40px;"></ion-icon>
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ usuario.username }}</h2>
+        <p><strong>Correo:</strong> {{ usuario.correo }}</p>
+        <p><strong>Teléfono:</strong> {{ usuario.telefono || 'No disponible' }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-card *ngIf="usuarios.length === 0">
+    <ion-card-header>
+      <ion-card-title>No hay usuarios registrados</ion-card-title>
+    </ion-card-header>
+  </ion-card>
+</ion-content>
+

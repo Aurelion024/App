@@ -47,6 +47,11 @@ const routes: Routes = [
     path: '**',
     redirectTo: 'error',
   },
+  {
+    path: 'usuarios',
+    loadChildren: () => import('./pages/usuarios/usuarios.module').then( m => m.UsuariosPageModule)
+  },
+
 
 ];
 
