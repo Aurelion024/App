@@ -48,25 +48,31 @@ export class AuthService {
     }
   }
 
-  loginAPI(user: string, pass: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      this.api.login(user).subscribe((res: any) => {
-        if (res.length > 0) {
-          if (
-            (res[0].username == user || res[0].correo == user) &&
-            res[0].pass == pass
-          ) {
-            this.storage.setItem('conectado', JSON.stringify(res[0]));
-            resolve(true);
-          } else {
-            resolve(false);
-            console.log('Credenciales no validas');
-          }
-        } else {
-          console.log('Llamada vacia');
-        }
-      });
-    });
+  async loginAPI(user: string, pass: string): Promise<boolean> {
+    //Obtenemos el usuario
+    let us = await firstValueFrom(this.api.login(user));
+    //Si por user no encontramos , buscamos por correo
+    if (us.length == 0) {
+      us = await firstValueFrom(this.api.logCorreo(user));
+    }
+    //validamos que el usuario exista
+    if (us.length > 0) {
+      //SI existe validamos credenciales
+      if (
+        (us[0].username == user || us[0].correo == user) &&
+        us[0].pass == pass
+      ) {
+        //SI existe lo guardamos en el storage como conectado y retornamos true
+        this.storage.setItem('conectado', us[0]);
+        return true;
+      } else {
+        //Credenciales erroneas
+        return false;
+      }
+    } else {
+      console.log('llamada vacia');
+      return false;
+    }
   }
 
   registrar(user: string, correo: string, pass: string) {
