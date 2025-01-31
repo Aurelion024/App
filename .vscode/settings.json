@@ -16,5 +16,6 @@
     "todos",
     "usuario",
     "usuarios"
-  ]
+  ],
+  "java.configuration.updateBuildConfiguration": "interactive"
 }

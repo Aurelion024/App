@@ -49,7 +49,7 @@ const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'error',
+    redirectTo: 'login',
     pathMatch: 'full'
   }
 
