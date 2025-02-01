@@ -1,16 +1,18 @@
 import { TestBed } from '@angular/core/testing';
+import { CanActivateFn } from '@angular/router';
 
 import { GuardService } from './guard.service';
 
+
 describe('GuardService', () => {
-  let service: GuardService;
+  const executeGuard: CanActivateFn = (...guardParameters) => 
+      TestBed.runInInjectionContext(() => GuardService(...guardParameters));
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(GuardService);
   });
 
   it('should be created', () => {
-    expect(service).toBeTruthy();
+    expect(executeGuard).toBeTruthy();
   });
 });

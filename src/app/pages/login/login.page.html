@@ -42,9 +42,9 @@
           <ion-button (click)="conectar()" shape="square" size="small" fill="outline" color="danger" id="btnConectar">
             Conectar
           </ion-button>
-          <ion-button (click)="registrar()" shape="square" size="small" fill="outline" color="danger" id="btnConectar">
-            Registrar
-          </ion-button>
+          <div class="signinLink">
+            <p>¿No tienes cuenta? <a [routerLink]="['/register']" style="color: #ff3131">Registrate Aquí</a></p>
+          </div>
         </ion-list>
       </ion-card-content>
     </ion-card>

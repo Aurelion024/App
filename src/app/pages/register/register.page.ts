@@ -14,66 +14,52 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./register.page.scss'],
   standalone: false,
 })
-export class RegistroPage {
-  user = {
-    username: '', // Nombre de usuario
-    correo: '',
-    pass: '', // Contraseña
-    confirmPassword: '',
-    telefono: ''
-  };
+export class RegistroPage implements OnInit {
+  constructor(
+    private toast: ToastController,
+    private router: Router,
+    private auth: AuthService
+  ) {}
 
-  constructor(private http: HttpClient, private router: Router) {}
+  user = {
+    usuario: '',
+    correo: '',
+    password: 'pass1234',
+  };
+  ngOnInit() {}
 
   registrar() {
-    // Expresiones regulares para validaciones
-    const usernamePattern = /^[a-zA-Z0-9_.-]{3,}$/;
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d@$!%*?&]{8,}$/;
-    const phonePattern = /^[0-9]{9}$/;
-
-    // Validar nombre de usuario
-    if (!usernamePattern.test(this.user.username)) {
-      alert('El nombre de usuario debe tener al menos 3 caracteres y solo puede contener letras, números, "-", ".", "_".');
-      return;
+    //Verificamos que los campos tengan valor
+    if (
+      this.user.usuario.trim().length > 0 ||
+      this.user.password.trim().length > 0 ||
+      this.user.correo.trim().length > 0
+    ) {
+      //Verificar si el registro se realizo
+      this.auth
+        .registerAPI(this.user.usuario, this.user.correo, this.user.password)
+        .then((res) => {
+          if (res) {
+            this.generarToast('Registro Exitoso \n Redireccionando');
+            setTimeout(() => {
+              this.router.navigate(['/home']);
+            }, 1500);
+          } else {
+            this.generarToast('Credenciales ya existen');
+          }
+        });
+    } else {
+      this.generarToast('Credenciales no pueden estar vacias');
     }
-
-    // Validar correo electrónico
-    if (!emailPattern.test(this.user.correo)) {
-      alert('El correo no tiene un formato válido.');
-      return;
-    }
-
-    // Validar contraseña
-    if (!passwordPattern.test(this.user.pass)) {
-      alert('La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un carácter especial.');
-      return;
-    }
-
-    // Verificar coincidencia de contraseñas
-    if (this.user.pass !== this.user.confirmPassword) {
-      alert('Las contraseñas no coinciden.');
-      return;
-    }
-
-    // Validar teléfono
-    if (!phonePattern.test(this.user.telefono)) {
-      alert('El número de teléfono debe tener exactamente 9 dígitos.');
-      return;
-    }
-
-    // Enviar datos al servidor (JSON Server)
-    const endpoint = 'http://localhost:3000/users';
-    this.http.post(endpoint, this.user).subscribe(
-      (response) => {
-        alert('Registro exitoso.');
-        console.log('Respuesta del servidor:', response);
-        this.router.navigate(['/login']); // Redirige al login
-      },
-      (error) => {
-        alert('Error al registrar el usuario.');
-        console.error(error);
-      }
-    );
+  }
+  generarToast(mensaje: string) {
+    const toast = this.toast.create({
+      message: mensaje,
+      duration: 3000,
+      position: 'bottom',
+    });
+    toast.then((res) => {
+      res.present();
+    });
   }
 }

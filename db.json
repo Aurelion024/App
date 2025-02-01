@@ -29,30 +29,6 @@
       "username": "jos",
       "correo": "admin",
       "pass": "pass1234"
-    },
-    {
-      "username": "copito",
-      "correo": "copito@gmail.com",
-      "pass": "Password123!",
-      "confirmPassword": "Password123!",
-      "telefono": "123456789",
-      "id": 6
-    },
-    {
-      "username": "Copo2",
-      "correo": "agusto@gmail.cl",
-      "pass": "Password123!2",
-      "confirmPassword": "Password123!",
-      "telefono": "133133133",
-      "id": 7
-    },
-    {
-      "username": "Marco",
-      "correo": "Marco@mail.cl",
-      "pass": "Pato$1234",
-      "confirmPassword": "Pato123$",
-      "telefono": "987654321",
-      "id": 8
     }
   ]
 }

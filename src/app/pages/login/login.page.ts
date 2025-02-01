@@ -18,60 +18,111 @@ import { HttpClient } from '@angular/common/http';
 export class LoginPage {
   user = {
     usuario: '',
-    password: ''
+    password: '',
   };
-  msj = ''; // Mensaje para el usuario
-  carga = false; // Indicador de carga
 
-  constructor(private http: HttpClient, private router: Router) {}
+  msj = '';
+  carga = false;
+  constructor(
+    private router: Router,
+    private animation: AnimationController,
+    private auth: AuthService
+  ) {}
 
   conectar() {
-    // Validar que los campos no estén vacíos
-    if (!this.user.usuario || !this.user.password) {
-      this.msj = 'Por favor, completa todos los campos.';
-      return;
-    }
-
-    this.carga = true;
-
-    // Endpoint del recurso en JSON Server
-    const endpoint = 'http://localhost:3000/users';
-
-    // Hacer una solicitud GET para obtener todos los usuarios
-    this.http.get<any[]>(endpoint).subscribe(
-      (users) => {
-        // Buscar al usuario con el username o correo proporcionado
-        const foundUser = users.find(
-          (u) =>
-            (u.username === this.user.usuario || u.correo === this.user.usuario) &&
-            u.pass === this.user.password
-        );
-
-        if (foundUser) {
-          // Usuario encontrado y autenticado
-          this.msj = 'Inicio de sesión exitoso.';
-          console.log('Usuario autenticado:', foundUser);
-          // Guardar el usuario en el local storage
-          localStorage.setItem('usuario', JSON.stringify(foundUser));
-
-          // Redirigir al usuario a la página de inicio
-          this.router.navigate(['/perfil']);
+    if (this.user.usuario.length > 0 && this.user.password.length > 0) {
+      this.auth.loginAPI(this.user.usuario, this.user.password).then((res) => {
+        if (res) {
+          let navigationExtras: NavigationExtras = {
+            state: { user: this.user },
+          };
+          this.carga = true;
+          this.animacionLogin().play();
+          this.msj = 'Conexion Exitosa';
+          /* setTimeout permite generar un delay en MS */
+          setTimeout(() => {
+            this.router.navigate(['/perfil'], navigationExtras);
+            this.msj = '';
+            this.carga = false;
+          }, 3000);
         } else {
-          // Usuario no encontrado o contraseña incorrecta
-          this.msj = 'Usuario o contraseña incorrectos.';
+          this.msj = 'Credenciales erroneas';
         }
-        this.carga = false;
-      },
-      (error) => {
-        console.error('Error al conectar con el servidor:', error);
-        this.msj = 'Error al conectar con el servidor.';
-        this.carga = false;
-      }
-    );
+      });
+    } else {
+      this.msj = 'Credenciales no pueden estar vacias';
+    }
   }
 
-  registrar() {
-    console.log('Redirigir al registro');
-    this.router.navigate(['/register']); // Redirige a la página de registro
+  ngAfterContentInit() {}
+
+  animacion() {
+    /* Seleccionamos el elemento que deseamos utilizar para la animacion
+       POr medio de un querySelector
+    */
+    const imagen = document.querySelector(
+      '#container ion-card ion-card-header ion-img'
+    ) as HTMLElement;
+    /* Una vez seleccionamos , generamos la animacion por medio del animation controller
+      Rectificar cada atributo en la documentacion 
+      https://ionicframework.com/docs/utilities/animations
+    */
+    const animacion = this.animation
+      .create()
+      .addElement(imagen)
+      .duration(5000)
+      .iterations(Infinity)
+      .keyframes([
+        {
+          offset: 0,
+          opacity: '1',
+          border: '10px solid white',
+          transform: 'translateX(0px)',
+        },
+        {
+          offset: 0.25,
+          opacity: '0.5',
+          border: '10px solid red',
+          transform: 'translateX(100px)',
+        },
+        {
+          offset: 0.5,
+          opacity: '1',
+          border: '10px solid blue',
+          transform: 'translateX(0px)',
+        },
+        {
+          offset: 0.75,
+          opacity: '1',
+          border: '10px solid green',
+          transform: 'translateX(-100px)',
+        },
+        {
+          offset: 1,
+          opacity: '1',
+          border: '10px solid cyan',
+          transform: 'translateX(0px)',
+        },
+      ]);
+    /* Por ultimo le damos play a la animacion para que empiece */
+    animacion.play();
+  }
+
+  animacionLogin() {
+    const imagen = document.querySelector(
+      '#container ion-card ion-card-header ion-img'
+    ) as HTMLElement;
+
+    const animacion = this.animation
+      .create()
+      .addElement(imagen)
+      .duration(6000)
+      .iterations(1)
+      .keyframes([
+        { offset: 0, transform: 'rotateY(0deg)' },
+        { offset: 0.5, transform: 'rotateY(180deg)' },
+        { offset: 1, transform: 'rotateY(0deg)' },
+      ]);
+    return animacion;
   }
 }

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { GuardService } from './Guards/guard.service';
 
 const routes: Routes = [
   {
@@ -22,10 +23,6 @@ const routes: Routes = [
   {
     path: 'perfil',
     loadChildren: () => import('./pages/perfil/perfil.module').then( m => m.PerfilPageModule)
-  },
-  {
-    path: 'ingredientes',
-    loadChildren: () => import('./pages/ingredientes/ingredientes.module').then( m => m.IngredientesPageModule)
   },
   {
     path: 'chat',

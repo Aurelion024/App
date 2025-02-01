@@ -1,9 +1,25 @@
-import { Injectable } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+import { AuthService } from '../Servicios/auth.service';
+import { ToastController } from '@ionic/angular';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class GuardService {
+export const GuardService: CanActivateFn = (route, state) => {
+  const auth: AuthService = new AuthService();
+  const router: Router = new Router();
+  const toastController: ToastController = new ToastController();
 
-  constructor() { }
-}
+  if (auth.isConnected()) {
+    return true;
+  } else {
+    router.navigate(['/perfil']);
+
+    const toast = toastController.create({
+      message: 'Debe autentificarse para acceder',
+      duration: 3000,
+      position: 'bottom',
+    });
+    toast.then((res) => {
+      res.present();
+    });
+    return false;
+  }
+};
