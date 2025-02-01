@@ -32,4 +32,9 @@ export class APIService {
   listarUsuarios(): Observable<any> {
     return this.http.get(this.baseURL + '/users').pipe(retry(3));
   }
+  updateUsuario(userId: number, data: any) {
+  const endpoint = `http://localhost:3000/users/${userId}`;
+  return this.http.put(endpoint, data); // Devuelve un observable
+}
+
 }

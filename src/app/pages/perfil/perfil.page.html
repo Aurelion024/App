@@ -1,103 +1,75 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-
-    <ion-button slot="start" (click)="irAUsuarios()" color="danger" fill="outline" size="small">
-      <ion-icon name="person-add-outline"></ion-icon>
-    </ion-button>
-    <ion-button slot="end" (click)="cerrarSesion()" color="danger" fill="outline" size="small">
-      <ion-icon name="log-out-outline" slot="start"></ion-icon>
-      Salir
-    </ion-button>
-
-    <ion-title>Mi Perfil</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
+  <!-- Tarjeta del perfil -->
   <ion-card *ngIf="usuario">
     <ion-card-header>
       <ion-card-title>Bienvenido, {{ usuario.username }}</ion-card-title>
     </ion-card-header>
     <ion-card-content>
+      <p><strong>Nombre:</strong> {{ usuario.username }}</p>
       <p><strong>Correo:</strong> {{ usuario.correo }}</p>
-      <p><strong>Teléfono:</strong> {{ usuario.telefono || 'No disponible' }}</p>
     </ion-card-content>
   </ion-card>
 
-  <ion-button expand="full" color="primary" (click)="abrirModal()">
+  <!-- Botones para abrir los modales -->
+  <ion-button expand="full" color="primary" (click)="mostrarModal = true">
     Editar Perfil
   </ion-button>
 
-  <ion-button expand="full" color="danger" (click)="cerrarSesion()">
-    Cerrar sesión
-  </ion-button>
-
-  <!-- Botón para cambiar contraseña -->
-  <ion-button expand="full" color="tertiary" (click)="abrirModalPassword()">
+  <ion-button expand="full" color="tertiary" (click)="mostrarModalPassword = true">
     Cambiar Contraseña
   </ion-button>
 
-  <!-- Modal para editar el perfil -->
-  <ion-modal [isOpen]="mostrarModal" (ionModalDidDismiss)="cerrarModal()">
-    <ng-container *ngIf="usuario">
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Editar Perfil</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="cerrarModal()">Cerrar</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content>
-        <ion-list>
-          <ion-item>
-            <ion-label position="stacked">Nombre de Usuario</ion-label>
-            <ion-input [(ngModel)]="usuario.username"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="stacked">Teléfono</ion-label>
-            <ion-input [(ngModel)]="usuario.telefono" type="tel"></ion-input>
-          </ion-item>
-        </ion-list>
-        <ion-button expand="full" color="success" (click)="guardarCambios()">
-          Guardar Cambios
-        </ion-button>
-      </ion-content>
-    </ng-container>
+  <!-- Modal para editar perfil -->
+  <ion-modal [isOpen]="mostrarModal" (ionModalDidDismiss)="mostrarModal = false">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Editar Perfil</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="mostrarModal = false">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-list>
+        <ion-item>
+          <ion-label position="stacked">Nombre de Usuario</ion-label>
+          <ion-input [(ngModel)]="usuario.username" placeholder="Escribe tu nombre"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Correo Electrónico</ion-label>
+          <ion-input [(ngModel)]="usuario.correo" type="email" placeholder="Escribe tu correo"></ion-input>
+        </ion-item>
+      </ion-list>
+      <ion-button expand="full" color="success" (click)="guardarCambios()">Guardar Cambios</ion-button>
+    </ion-content>
   </ion-modal>
 
   <!-- Modal para cambiar contraseña -->
-  <ion-modal [isOpen]="mostrarModalPassword" (ionModalDidDismiss)="cerrarModalPassword()">
-    <ng-container *ngIf="usuario">
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Cambiar Contraseña</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="cerrarModalPassword()">Cerrar</ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content>
-        <ion-list>
-          <ion-item>
-            <ion-label position="stacked">Contraseña Actual</ion-label>
-            <ion-input [(ngModel)]="passwordData.currentPassword" type="password"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="stacked">Nueva Contraseña</ion-label>
-            <ion-input [(ngModel)]="passwordData.newPassword" type="password"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="stacked">Confirmar Nueva Contraseña</ion-label>
-            <ion-input [(ngModel)]="passwordData.confirmPassword" type="password"></ion-input>
-          </ion-item>
-        </ion-list>
-        <ion-button expand="full" color="success" (click)="guardarNuevaPassword()">
-          Guardar Contraseña
-        </ion-button>
-      </ion-content>
-    </ng-container>
+  <ion-modal [isOpen]="mostrarModalPassword" (ionModalDidDismiss)="mostrarModalPassword = false">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Cambiar Contraseña</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="mostrarModalPassword = false">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-list>
+        <ion-item>
+          <ion-label position="stacked">Contraseña Actual</ion-label>
+          <ion-input [(ngModel)]="passwordData.currentPassword" type="password" placeholder="Contraseña actual"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Nueva Contraseña</ion-label>
+          <ion-input [(ngModel)]="passwordData.newPassword" type="password" placeholder="Nueva contraseña"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Confirmar Nueva Contraseña</ion-label>
+          <ion-input [(ngModel)]="passwordData.confirmPassword" type="password" placeholder="Confirma tu contraseña"></ion-input>
+        </ion-item>
+      </ion-list>
+      <ion-button expand="full" color="success" (click)="guardarNuevaPassword()">Guardar Contraseña</ion-button>
+    </ion-content>
   </ion-modal>
-  
-  
 </ion-content>

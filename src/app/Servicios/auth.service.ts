@@ -39,7 +39,7 @@ export class AuthService {
 
     if (conectado) {
       //Guardamos el usuario encontrado en el almacenamiento local
-      this.storage.setItem('conectado', conectado);
+      this.storage.setItem('usuario', conectado);
       return true;
     } else {
       return false;
@@ -61,14 +61,14 @@ export class AuthService {
         us[0].pass == pass
       ) {
         //SI existe lo guardamos en el storage como conectado y retornamos true
-        this.storage.setItem('conectado', us[0]);
+        this.storage.setItem('usuario', us[0]);
         return true;
       } else {
         //Credenciales erroneas
         return false;
       }
     } else {
-      console.log('llamada vacia');
+      console.log('No se encontró usuario con esas credenciales.');
       return false;
     }
   }
@@ -95,7 +95,7 @@ export class AuthService {
     //Agregamos a la lista
     listaUsuarios.push(nuevoUsuario);
     //Devolvemos el registro de usuarios a su lugar
-    this.storage.setItem('users', listaUsuarios);
+    this.storage.setItem('usuario', listaUsuarios);
     return true;
   }
   /*  */
@@ -129,5 +129,21 @@ export class AuthService {
 
   logout() {
     this.storage.removeItem('conectado');
+  }
+  /**
+   * Actualiza los datos de un usuario en el servidor.
+   * @param userId ID del usuario a actualizar.
+   * @param data Objeto con los datos a actualizar.
+   * @returns Promise<boolean> indicando si la operación fue exitosa.
+   */
+  async updateUser(userId: number, data: any): Promise<boolean> {
+    try {
+      // Llama al método updateUsuario del APIService
+      await firstValueFrom(this.api.updateUsuario(userId, data));
+      return true;
+    } catch (error) {
+      console.error('Error al actualizar el usuario:', error);
+      return false;
+    }
   }
 }

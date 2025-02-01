@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../Servicios/auth.service';
 import { ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
-
+import { ModalController } from '@ionic/angular';
+import { LocalStorageService } from '../../Servicios/local-storage.service';
 
 @Component({
   selector: 'app-perfil',
@@ -13,111 +14,99 @@ import { Router } from '@angular/router';
 })
 export class PerfilPage implements OnInit {
   usuario: any = null;
-  mostrarModal = false; // Control del modal para editar perfil
-  mostrarModalPassword = false; // Control del modal para cambiar contraseña
+  mostrarModal = false;
+  mostrarModalPassword = false;
   passwordData = {
     currentPassword: '',
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
   };
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(
+    private router: Router,
+    private storage: LocalStorageService,
+    private auth: AuthService,
+    private toast: ToastController
+    ) {}
 
-  ngOnInit() {
-    const storedUser = localStorage.getItem('usuario');
-    if (storedUser) {
-      this.usuario = JSON.parse(storedUser);
-    } else {
-      this.router.navigate(['/login']);
+    ngOnInit() {
+      const storedUser = this.storage.getItem('usuario');
+      if (storedUser) {
+        this.usuario = storedUser; // Usuario cargado correctamente desde LocalStorage
+        console.log('Usuario cargado correctamente:', this.usuario);
+      } else {
+        // Si no hay usuario en sesión, redirige al login y usa valores predeterminados para evitar errores
+        console.log('No hay usuario en sesión, redirigiendo a login...');
+        this.usuario = { username: '', correo: '', pass: '' }; // Valores predeterminados
+        this.router.navigate(['/login']);
+      }
     }
-  }
 
   cerrarSesion() {
-    localStorage.removeItem('usuario');
+    this.storage.removeItem('usuario');
+    console.log('Sesión cerrada correctamente');
     this.router.navigate(['/login']);
   }
 
-  abrirModal() {
-    this.mostrarModal = true;
-  }
-
-  cerrarModal() {
-    this.mostrarModal = false;
-  }
-
-  abrirModalPassword() {
-    this.mostrarModalPassword = true;
-  }
-
-  cerrarModalPassword() {
-    this.mostrarModalPassword = false;
+  async mostrarToast(mensaje: string) {
+    const toast = await this.toast.create({
+      message: mensaje,
+      duration: 3000,
+      position: 'bottom',
+    });
+    await toast.present();
   }
 
   guardarCambios() {
-    const usernamePattern = /^[a-zA-Z0-9_.-]{3,}$/;
-    const phonePattern = /^[0-9]{9}$/;
-
-    if (!usernamePattern.test(this.usuario.username)) {
-      alert('El nombre de usuario debe tener al menos 3 caracteres y solo puede contener letras, números, "-", ".", "_".');
+    if (!this.usuario.username.trim() || !this.usuario.correo.trim()) {
+      this.mostrarToast('El nombre de usuario y el correo no pueden estar vacíos.');
       return;
     }
 
-    if (!phonePattern.test(this.usuario.telefono)) {
-      alert('El número de teléfono debe tener exactamente 9 dígitos.');
-      return;
-    }
-
-    // Actualizar datos en JSON Server
-    const endpoint = `http://localhost:3000/users/${this.usuario.id}`;
-    this.http.put(endpoint, this.usuario).subscribe(
-      (response) => {
-        alert('Perfil actualizado correctamente.');
-        localStorage.setItem('usuario', JSON.stringify(this.usuario)); // Actualizar Local Storage
-        this.mostrarModal = false; // Cerrar el modal
-      },
-      (error) => {
-        alert('Error al actualizar el perfil.');
+    this.auth
+      .updateUser(this.usuario.id, {
+        username: this.usuario.username,
+        correo: this.usuario.correo,
+      })
+      .then(() => {
+        this.mostrarToast('Perfil actualizado correctamente.');
+        this.storage.setItem('usuario', this.usuario); // Actualiza localStorage
+        this.mostrarModal = false; // Cierra el modal
+      })
+      .catch((error) => {
+        this.mostrarToast('Error al actualizar el perfil.');
         console.error(error);
-      }
-    );
+      });
   }
 
   guardarNuevaPassword() {
-    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d@$!%*?&]{8,}$/;
-
     if (this.passwordData.currentPassword !== this.usuario.pass) {
-      alert('La contraseña actual no es correcta.');
-      return;
-    }
-
-    if (!passwordPattern.test(this.passwordData.newPassword)) {
-      alert('La nueva contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un carácter especial.');
+      this.mostrarToast('La contraseña actual no es correcta.');
       return;
     }
 
     if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
-      alert('La nueva contraseña y su confirmación no coinciden.');
+      this.mostrarToast('La nueva contraseña y su confirmación no coinciden.');
       return;
     }
 
-    // Actualizar la contraseña en JSON Server
-    const endpoint = `http://localhost:3000/users/${this.usuario.id}`;
-    this.usuario.pass = this.passwordData.newPassword; // Actualizar la contraseña en el objeto usuario
-    this.http.put(endpoint, this.usuario).subscribe(
-      (response) => {
-        alert('Contraseña actualizada correctamente.');
-        localStorage.setItem('usuario', JSON.stringify(this.usuario)); // Actualizar Local Storage
-        this.mostrarModalPassword = false; // Cerrar el modal
-        this.passwordData = { currentPassword: '', newPassword: '', confirmPassword: '' }; // Limpiar campos
-      },
-      (error) => {
-        alert('Error al actualizar la contraseña.');
-        console.error(error);
-      }
-    );
-  }
+    if (this.passwordData.newPassword.trim().length < 8) {
+      this.mostrarToast('La nueva contraseña debe tener al menos 8 caracteres.');
+      return;
+    }
 
-  irAUsuarios() {
-    this.router.navigate(['/usuarios']);
+    this.auth
+      .updateUser(this.usuario.id, { pass: this.passwordData.newPassword })
+      .then(() => {
+        this.mostrarToast('Contraseña actualizada correctamente.');
+        this.usuario.pass = this.passwordData.newPassword; // Actualiza localStorage
+        this.storage.setItem('usuario', this.usuario);
+        this.mostrarModalPassword = false; // Cierra el modal
+        this.passwordData = { currentPassword: '', newPassword: '', confirmPassword: '' }; // Limpia los campos
+      })
+      .catch((error) => {
+        this.mostrarToast('Error al actualizar la contraseña.');
+        console.error(error);
+      });
   }
 }

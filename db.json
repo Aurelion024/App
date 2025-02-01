@@ -29,6 +29,12 @@
       "username": "jos",
       "correo": "admin",
       "pass": "pass1234"
+    },
+    {
+      "id": 6,
+      "username": "Aurelioss",
+      "correo": "aurelioss@gmail.com",
+      "pass": "Pass1234"
     }
   ]
 }
