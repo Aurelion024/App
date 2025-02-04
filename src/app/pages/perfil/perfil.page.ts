@@ -5,6 +5,12 @@ import { ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { LocalStorageService } from '../../Servicios/local-storage.service';
+import { IonModal } from '@ionic/angular';
+import { ViewChild } from '@angular/core';
+import { OverlayEventDetail } from '@ionic/core/components';
+
+
+
 
 @Component({
   selector: 'app-perfil',
@@ -12,10 +18,12 @@ import { LocalStorageService } from '../../Servicios/local-storage.service';
   styleUrls: ['./perfil.page.scss'],
   standalone: false,
 })
-export class PerfilPage implements OnInit {
+export class PerfilPage {
+  @ViewChild(IonModal) modal!: IonModal;  // ✅ Uso de operador "!" para evitar el error
+
   usuario: any = null;
-  mostrarModal = false;
-  mostrarModalPassword = false;
+  message = '';
+  name: string = '';
   passwordData = {
     currentPassword: '',
     newPassword: '',
@@ -24,28 +32,45 @@ export class PerfilPage implements OnInit {
 
   constructor(
     private router: Router,
-    private storage: LocalStorageService,
     private auth: AuthService,
-    private toast: ToastController
-    ) {}
+    private toast: ToastController,
+    private storage: LocalStorageService
+  ) {}
 
-    ngOnInit() {
-      const storedUser = this.storage.getItem('usuario');
-      if (storedUser) {
-        this.usuario = storedUser; // Usuario cargado correctamente desde LocalStorage
-        console.log('Usuario cargado correctamente:', this.usuario);
-      } else {
-        // Si no hay usuario en sesión, redirige al login y usa valores predeterminados para evitar errores
-        console.log('No hay usuario en sesión, redirigiendo a login...');
-        this.usuario = { username: '', correo: '', pass: '' }; // Valores predeterminados
-        this.router.navigate(['/login']);
-      }
+  ngOnInit() {
+    const storedUser = this.storage.getItem('usuario');
+    if (storedUser) {
+      this.usuario = storedUser;
+      this.name = this.usuario.username;
     }
+  }
 
-  cerrarSesion() {
-    this.storage.removeItem('usuario');
-    console.log('Sesión cerrada correctamente');
-    this.router.navigate(['/login']);
+  cancel() {
+    this.modal.dismiss(null, 'cancel');
+  }
+
+  confirm() {
+    if (!this.name.trim() || !this.usuario.correo.trim()) {
+      this.mostrarToast('El nombre de usuario y el correo no pueden estar vacíos.');
+      return;
+    }
+    if (this.passwordData.newPassword && (this.passwordData.newPassword.length < 8 || this.passwordData.newPassword !== this.passwordData.confirmPassword)) {
+      this.mostrarToast('Las contraseñas no coinciden o son demasiado cortas.');
+      return;
+    }
+    this.usuario.username = this.name;
+    const updateData: any = { username: this.usuario.username, correo: this.usuario.correo };
+    if (this.passwordData.newPassword) {
+      updateData.pass = this.passwordData.newPassword;
+    }
+    this.auth.updateUser(this.usuario.id, updateData).then(() => {
+      this.mostrarToast('Perfil actualizado correctamente.');
+      this.storage.setItem('usuario', this.usuario);
+      this.modal.dismiss(this.name, 'confirm');
+    }).catch(error => {
+      this.mostrarToast('Error al actualizar el perfil.');
+      console.error(error);
+    });
   }
 
   async mostrarToast(mensaje: string) {
@@ -57,56 +82,29 @@ export class PerfilPage implements OnInit {
     await toast.present();
   }
 
-  guardarCambios() {
-    if (!this.usuario.username.trim() || !this.usuario.correo.trim()) {
-      this.mostrarToast('El nombre de usuario y el correo no pueden estar vacíos.');
-      return;
+  onWillDismiss(event: Event) {
+    const ev = event as CustomEvent<OverlayEventDetail<string>>;
+    if (ev.detail.role === 'confirm') {
+      this.message = `Perfil actualizado: ${ev.detail.data}`;
     }
-
-    this.auth
-      .updateUser(this.usuario.id, {
-        username: this.usuario.username,
-        correo: this.usuario.correo,
-      })
-      .then(() => {
-        this.mostrarToast('Perfil actualizado correctamente.');
-        this.storage.setItem('usuario', this.usuario); // Actualiza localStorage
-        this.mostrarModal = false; // Cierra el modal
-      })
-      .catch((error) => {
-        this.mostrarToast('Error al actualizar el perfil.');
-        console.error(error);
-      });
   }
 
-  guardarNuevaPassword() {
-    if (this.passwordData.currentPassword !== this.usuario.pass) {
-      this.mostrarToast('La contraseña actual no es correcta.');
-      return;
-    }
-
-    if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
-      this.mostrarToast('La nueva contraseña y su confirmación no coinciden.');
-      return;
-    }
-
-    if (this.passwordData.newPassword.trim().length < 8) {
-      this.mostrarToast('La nueva contraseña debe tener al menos 8 caracteres.');
-      return;
-    }
-
-    this.auth
-      .updateUser(this.usuario.id, { pass: this.passwordData.newPassword })
-      .then(() => {
-        this.mostrarToast('Contraseña actualizada correctamente.');
-        this.usuario.pass = this.passwordData.newPassword; // Actualiza localStorage
-        this.storage.setItem('usuario', this.usuario);
-        this.mostrarModalPassword = false; // Cierra el modal
-        this.passwordData = { currentPassword: '', newPassword: '', confirmPassword: '' }; // Limpia los campos
-      })
-      .catch((error) => {
-        this.mostrarToast('Error al actualizar la contraseña.');
-        console.error(error);
-      });
+  logout() {
+    this.auth.logout();
+    this.router.navigate(['/home']);
+    this.generarToast('Usuario Desconectado');
   }
+
+  generarToast(message: string) {
+    const toast = this.toast.create({
+      message: message,
+      duration: 3000,
+      position: 'bottom',
+    });
+
+    toast.then((res) => {
+      res.present();
+    });
+  }
+
 }

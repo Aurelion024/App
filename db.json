@@ -31,10 +31,46 @@
       "pass": "pass1234"
     },
     {
-      "id": 6,
-      "username": "Aurelioss",
+      "username": "Aurelios",
       "correo": "aurelioss@gmail.com",
+      "pass": "Pass123456",
+      "id": 6,
+      "recoveryCode": "314088"
+    },
+    {
+      "id": 7,
+      "username": "Duoc",
+      "correo": "Duocuc@gmail.com",
       "pass": "Pass1234"
+    },
+    {
+      "id": 8,
+      "username": "Joselo",
+      "correo": "jos.munozm@duocuc.cl",
+      "pass": "Loleroforever12",
+      "recoveryCode": null
+    }
+  ],
+  "autos": [
+    {
+      "id": 1,
+      "conductor": "Juan Pérez",
+      "ubicacion": [
+        -70.6483,
+        -33.4569
+      ],
+      "destino": "La Florida",
+      "asientos_disponibles": 3
+    },
+    {
+      "id": 2,
+      "conductor": "María López",
+      "ubicacion": [
+        -70.65,
+        -33.458
+      ],
+      "destino": "Maipú",
+      "asientos_disponibles": 2
     }
   ]
 }

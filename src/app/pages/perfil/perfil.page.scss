@@ -2,3 +2,20 @@ ion-modal {
     --background: #fff; /* Fondo blanco para el modal */
     --border-radius: 12px; /* Bordes redondeados */
   }
+
+  ion-header {
+    --background: var(--ion-color-primary); /* Color de fondo de la cabecera */
+    --color: white; /* Color de letra de la cabecera */
+  }
+
+  ion-title {
+    font-size: 24px; /* Tamaño de fuente de la cabecera */
+  }
+
+  ion-content {
+    padding: 24px; /* Margen interno del contenido */
+  }
+
+
+
+
