@@ -53,10 +53,6 @@ const routes: Routes = [
     path: 'solicitar-viaje',
     loadChildren: () => import('./pages/solicitar-viaje/solicitar-viaje.module').then( m => m.SolicitarViajePageModule)
   },
-  {
-    path: 'map',
-    loadChildren: () => import('./pages/map/map.module').then( m => m.MapPageModule)
-  },
 
 ];
 
